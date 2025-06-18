@@ -1,5 +1,6 @@
 package com.ifpb.sistemaLogin.sistema.login.controller;
 
+import com.ifpb.sistemaLogin.sistema.login.dto.LoginDTO;
 import com.ifpb.sistemaLogin.sistema.login.model.entities.Usuario;
 import com.ifpb.sistemaLogin.sistema.login.service.UsuarioService;
 import org.springframework.http.ResponseEntity;
@@ -45,4 +46,8 @@ public class UsuarioController {
         return usuario;
     }
 
+    @PostMapping("/logar")
+    public void logar(@RequestBody LoginDTO loginDTO) {
+        System.out.println(loginDTO);
+    }
 }

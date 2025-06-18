@@ -23,7 +23,6 @@ function cadastrar(){
     .then(function(res){console.log(res)})
     .catch(function(res){console.log(res)})
 
-    console.log("entrou")
 };
 
 form.addEventListener('submit', function (event) {

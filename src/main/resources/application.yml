@@ -3,7 +3,7 @@ spring:
     name: sistema-login
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/sistema-login
+    url: jdbc:postgresql://localhost:5433/sistema-login
     username: postgres
     password: postgres
     driver-class-name: org.postgresql.Driver

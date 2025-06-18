@@ -25,7 +25,9 @@ public class UsuarioService {
         //Aqui galera o optional return o usuario se existir, se não (orElse) null
         return optionalUsuario.orElse(null);
     }
-    public void save(Usuario usuario){
+    public Usuario save(Usuario usuario){
         repository.save(usuario);
+        return usuario;
     }
+
 }

@@ -47,19 +47,21 @@ public class UsuarioService {
 
         Optional<Usuario> usuarioLogado = repository.findByLogin(loginDTO.getLogin());
         String keyBlock = "block-" + loginDTO.getLogin();
+        String keyAttempts = "tentativas-" + loginDTO.getLogin();
         if (usuarioLogado.isPresent()) {
 
             if (templateBlocks.opsForValue().get(keyBlock) == null) {
                 if (usuarioLogado.get().getSenha().equals(loginDTO.getSenha())) {
+                    templateAttemps.delete(keyAttempts);
                     return true;
                 }
-                String chave = "tentativas-" + loginDTO.getLogin();
-                templateAttemps.opsForValue().increment(chave);
-                Integer tentativas = templateAttemps.opsForValue().get(chave);
+
+                templateAttemps.opsForValue().increment(keyAttempts);
+                Integer tentativas = templateAttemps.opsForValue().get(keyAttempts);
                 if (tentativas != null && tentativas == 3) {
                     templateBlocks.opsForValue().set(keyBlock, "blocked");
-                    templateBlocks.expire(keyBlock,Duration.ofSeconds(120));
-                    templateAttemps.expire(chave, Duration.ofSeconds(120));
+                    templateBlocks.expire(keyBlock,Duration.ofSeconds(1));
+                    templateAttemps.expire(keyAttempts, Duration.ofSeconds(1));
                 }
 
             } else {

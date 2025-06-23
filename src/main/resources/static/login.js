@@ -22,16 +22,16 @@ function logar(){
 
             if (res.ok) {
                 console.log("Login sucesso:", data);
-                window.location.href = "/home";
+                window.open('home.html', '_self');
             } else {
                 console.log("Falha:", data);
                 alert("Login ou senha incorretos.");
             }
-    })
+        })
 
-    .catch(function(res){
-        console.log("Erro:", res);
-    })
+        .catch(function(res){
+            console.log("Erro:", res);
+        })
 
 }
 

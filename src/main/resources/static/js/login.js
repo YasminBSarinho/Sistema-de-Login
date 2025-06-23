@@ -17,10 +17,18 @@ function logar(){
         body:JSON.stringify(usuarioLogin)
 
     })
+        .then(async function(res) {
+            const data = await res.text();
 
-    .then(function(res){
-    console.log("Resposta:", res);
+            if (res.ok) {
+                console.log("Login sucesso:", data);
+                window.location.href = "/home";
+            } else {
+                console.log("Falha:", data);
+                alert("Login ou senha incorretos.");
+            }
     })
+
     .catch(function(res){
         console.log("Erro:", res);
     })

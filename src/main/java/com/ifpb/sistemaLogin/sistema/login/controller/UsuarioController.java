@@ -47,7 +47,11 @@ public class UsuarioController {
     }
 
     @PostMapping("/logar")
-    public void logar(@RequestBody LoginDTO loginDTO) {
-        System.out.println(loginDTO);
+    public ResponseEntity<String> logar(@RequestBody LoginDTO loginDTO) {
+        if (service.Autenticar(loginDTO)) {
+            return ResponseEntity.ok("Autenticado com sucesso");
+        } else {
+            return ResponseEntity.status(401).body("Login ou senha incorretos");
+        }
     }
 }

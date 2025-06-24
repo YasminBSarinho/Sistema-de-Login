@@ -5,6 +5,7 @@ import com.ifpb.sistemaLogin.sistema.login.model.entities.Session;
 import com.ifpb.sistemaLogin.sistema.login.model.entities.Usuario;
 import com.ifpb.sistemaLogin.sistema.login.repository.SessionRepository;
 import com.ifpb.sistemaLogin.sistema.login.repository.UsuarioRepository;
+import com.ifpb.sistemaLogin.sistema.login.service.exception.LoginBlockedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -50,37 +51,46 @@ public class UsuarioService {
         return null;
     }
 
-    public boolean Autenticar(LoginDTO loginDTO) {
-
+    public boolean Autenticar(LoginDTO loginDTO) throws LoginBlockedException {
+        if (isBloqueado(loginDTO)) {
+            throw  new LoginBlockedException("O usuário fez 3 tentativas, bloqueado por 1 minutos");
+        }
 
         Optional<Usuario> usuarioLogado = repository.findByLogin(loginDTO.getLogin());
-        String keyBlock = "block-" + loginDTO.getLogin();
-        String keyAttempts = "tentativas-" + loginDTO.getLogin();
+
         if (usuarioLogado.isPresent()) {
+            return this.isPasswordValid(loginDTO, usuarioLogado.get());
+        }
 
-            if (templateBlocks.opsForValue().get(keyBlock) == null) {
-                if (usuarioLogado.get().getSenha().equals(loginDTO.getSenha())) {
-                    templateAttemps.delete(keyAttempts);
-                    String key = UUID.randomUUID().toString();
-                    templateSession.opsForValue().set(key, new Session(usuarioLogado.get()));
-                    templateSession.expire(key, Duration.ofSeconds(20));
-                    return true ;
-                }
+        return false;
+    }
+    private Boolean isPasswordValid(LoginDTO loginDTO, Usuario usuario){
+        String senhaDigita = loginDTO.getSenha();
+        String keyTentativas = getKeyTentativas(loginDTO);
+        if (senhaDigita.equals(usuario.getSenha())) {
+            templateAttemps.delete(templateAttemps.keys(keyTentativas));
+            templateSession.opsForValue().set("session", new Session(usuario));
+            templateSession.expire("session", Duration.ofSeconds(20));
+            return true ;
+        }
 
-                templateAttemps.opsForValue().increment(keyAttempts);
-                Integer tentativas = templateAttemps.opsForValue().get(keyAttempts);
-                if (tentativas != null && tentativas == 3) {
-                    templateBlocks.opsForValue().set(keyBlock, "blocked");
-                    templateBlocks.expire(keyBlock,Duration.ofSeconds(30));
-                    templateAttemps.delete(keyAttempts);
-                }
-
-            } else {
-                System.out.println("Tá bloqueado paizão");
-            }
+        Long quantidade = templateAttemps.opsForValue().increment(keyTentativas);
+        if(quantidade >= 3){
+            bloquear(loginDTO);
         }
         return false;
     }
 
+    private boolean isBloqueado(LoginDTO loginDTO){
+        String keyTentativas = getKeyTentativas(loginDTO);
+        Integer tentativas = templateAttemps.opsForValue().get(keyTentativas);
+        return tentativas != null && tentativas == 3;
+    }
+    private void bloquear (LoginDTO loginDTO){
+        templateBlocks.expire(getKeyTentativas(loginDTO),Duration.ofSeconds(100));
+    }
+    private String getKeyTentativas(LoginDTO loginDTO){
+        return  "tentativas-" + loginDTO.getLogin();
+    }
 
 }

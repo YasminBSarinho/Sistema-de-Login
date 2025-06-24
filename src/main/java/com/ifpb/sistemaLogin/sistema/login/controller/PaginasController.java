@@ -48,6 +48,6 @@ public class PaginasController {
     }
 
     public boolean buscarSession(){
-        return !templateSession.keys("*").isEmpty();
+        return !templateSession.keys("session").isEmpty();
     }
 }

@@ -1,8 +1,10 @@
 package com.ifpb.sistemaLogin.sistema.login.controller;
 
 import com.ifpb.sistemaLogin.sistema.login.dto.LoginDTO;
+
 import com.ifpb.sistemaLogin.sistema.login.model.entities.Usuario;
 import com.ifpb.sistemaLogin.sistema.login.service.UsuarioService;
+import com.ifpb.sistemaLogin.sistema.login.service.exception.LoginBlockedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -47,7 +49,16 @@ public class UsuarioController {
     }
 
     @PostMapping("/logar")
-    public void logar(@RequestBody LoginDTO loginDTO) {
-        System.out.println(loginDTO);
+    public ResponseEntity<String> logar(@RequestBody LoginDTO loginDTO) {
+        try {
+            if (service.Autenticar(loginDTO)) {
+                return ResponseEntity.ok("Autenticado com sucesso");
+            } else {
+                return ResponseEntity.status(401).body("Login ou senha incorretos");
+            }
+        }catch (LoginBlockedException e){
+            return ResponseEntity.status(429).body(e.getMessage());
+        }
+
     }
 }

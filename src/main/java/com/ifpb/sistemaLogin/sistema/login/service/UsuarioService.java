@@ -1,7 +1,9 @@
 package com.ifpb.sistemaLogin.sistema.login.service;
 
 import com.ifpb.sistemaLogin.sistema.login.dto.LoginDTO;
+import com.ifpb.sistemaLogin.sistema.login.model.entities.Session;
 import com.ifpb.sistemaLogin.sistema.login.model.entities.Usuario;
+import com.ifpb.sistemaLogin.sistema.login.repository.SessionRepository;
 import com.ifpb.sistemaLogin.sistema.login.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,6 +24,9 @@ public class UsuarioService {
     @Autowired
     @Qualifier("blocks")
     private RedisTemplate<String, String> templateBlocks;
+    @Autowired
+    @Qualifier("Session")
+    private RedisTemplate<String, Session> templateSession;
 
     public UsuarioService(UsuarioRepository repository) {
         this.repository = repository;
@@ -38,8 +43,11 @@ public class UsuarioService {
     }
 
     public Usuario save(Usuario usuario){
-        repository.save(usuario);
-        return usuario;
+        Optional<Usuario> existente = repository.findByLogin(usuario.getLogin());
+        if (existente.isEmpty()) {
+            return repository.save(usuario);
+        }
+        return null;
     }
 
     public boolean Autenticar(LoginDTO loginDTO) {
@@ -53,15 +61,18 @@ public class UsuarioService {
             if (templateBlocks.opsForValue().get(keyBlock) == null) {
                 if (usuarioLogado.get().getSenha().equals(loginDTO.getSenha())) {
                     templateAttemps.delete(keyAttempts);
-                    return true;
+                    String key = UUID.randomUUID().toString();
+                    templateSession.opsForValue().set(key, new Session(usuarioLogado.get()));
+                    templateSession.expire(key, Duration.ofSeconds(20));
+                    return true ;
                 }
 
                 templateAttemps.opsForValue().increment(keyAttempts);
                 Integer tentativas = templateAttemps.opsForValue().get(keyAttempts);
                 if (tentativas != null && tentativas == 3) {
                     templateBlocks.opsForValue().set(keyBlock, "blocked");
-                    templateBlocks.expire(keyBlock,Duration.ofSeconds(1));
-                    templateAttemps.expire(keyAttempts, Duration.ofSeconds(1));
+                    templateBlocks.expire(keyBlock,Duration.ofSeconds(30));
+                    templateAttemps.delete(keyAttempts);
                 }
 
             } else {

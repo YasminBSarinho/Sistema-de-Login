@@ -22,7 +22,7 @@ function logar(){
 
             if (res.ok) {
                 console.log("Login sucesso:", data);
-                window.open('home.html', '_self');
+                window.location.href = '/home';
             } else {
                 console.log("Falha:", data);
                 alert("Login ou senha incorretos.");

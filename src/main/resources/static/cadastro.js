@@ -1,6 +1,8 @@
 const form = document.getElementById("formCadastro");
 const alertSucesso = document.getElementById('alertSucesso');
 const btnOk = document.getElementById('btnOk');
+const alertErro = document.getElementById('alertErro');
+const btnErro = document.getElementById('btnErro');
 
 function cadastrar() {
     const usuario = {
@@ -22,13 +24,13 @@ function cadastrar() {
             if (res.ok) {
                 alertSucesso.classList.remove('hidden');
             } else {
-                alert("Erro ao cadastrar. Verifique os dados e tente novamente.");
+                alertErro.classList.remove('hidden');
             }
             console.log(res);
         })
         .catch(function (err) {
             console.log(err);
-            alert("Erro na conexão com o servidor.");
+            alertErro.classList.remove('hidden');
         });
 }
 
@@ -40,4 +42,8 @@ form.addEventListener('submit', function (event) {
 btnOk.addEventListener('click', function() {
     alertSucesso.classList.add('hidden');
     window.location.href = '/login';
+});
+
+btnErro.addEventListener('click', function() {
+    alertErro.classList.add('hidden');
 });

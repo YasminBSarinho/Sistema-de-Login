@@ -44,6 +44,7 @@ public class PaginasController {
         if (!buscarSession()){
             return "redirect:/login";
         }
+
         return "home.html";
     }
 

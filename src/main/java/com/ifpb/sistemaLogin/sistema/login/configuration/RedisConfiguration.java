@@ -24,16 +24,6 @@ public class RedisConfiguration {
         return template;
     }
 
-    @Bean("blocks")
-    public RedisTemplate<String, String> redisTemplateBlock(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, String> template = new RedisTemplate<>();
-        template.setConnectionFactory(connectionFactory);
-        //Essa parte deixa a serialização das chaves sem bugs
-        template.setKeySerializer(new StringRedisSerializer());
-        template.setValueSerializer(new GenericToStringSerializer<>(String.class));
-
-        return template;
-    }
     @Bean("Session")
     @Scope("prototype")
     public RedisTemplate<String, Session> redisTemplateSession(RedisConnectionFactory connectionFactory) {

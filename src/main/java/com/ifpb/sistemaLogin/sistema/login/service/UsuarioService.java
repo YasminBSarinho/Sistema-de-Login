@@ -22,10 +22,6 @@ public class UsuarioService {
     @Autowired
     @Qualifier("attempts")
     private RedisTemplate<String, Integer> templateAttemps;
-    @Autowired
-    @Qualifier("blocks")
-    private RedisTemplate<String, String> templateBlocks;
-    @Autowired
     @Qualifier("Session")
     private RedisTemplate<String, Session> templateSession;
 
@@ -87,7 +83,7 @@ public class UsuarioService {
         return tentativas != null && tentativas == 3;
     }
     private void bloquear (LoginDTO loginDTO){
-        templateBlocks.expire(getKeyTentativas(loginDTO),Duration.ofSeconds(100));
+        templateAttemps.expire(getKeyTentativas(loginDTO),Duration.ofSeconds(100));
     }
     private String getKeyTentativas(LoginDTO loginDTO){
         return  "tentativas-" + loginDTO.getLogin();

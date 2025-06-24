@@ -3,7 +3,6 @@ package com.ifpb.sistemaLogin.sistema.login.service;
 import com.ifpb.sistemaLogin.sistema.login.dto.LoginDTO;
 import com.ifpb.sistemaLogin.sistema.login.model.entities.Session;
 import com.ifpb.sistemaLogin.sistema.login.model.entities.Usuario;
-import com.ifpb.sistemaLogin.sistema.login.repository.SessionRepository;
 import com.ifpb.sistemaLogin.sistema.login.repository.UsuarioRepository;
 import com.ifpb.sistemaLogin.sistema.login.service.exception.LoginBlockedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +21,7 @@ public class UsuarioService {
     @Autowired
     @Qualifier("attempts")
     private RedisTemplate<String, Integer> templateAttemps;
+    @Autowired
     @Qualifier("Session")
     private RedisTemplate<String, Session> templateSession;
 

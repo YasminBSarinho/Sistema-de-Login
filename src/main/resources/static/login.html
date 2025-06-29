@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-neutral-900 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white/5 backdrop-blur-md border border-white/10 p-8 rounded-2xl shadow-xl w-full max-w-md">
+    <h2 class="text-3xl font-bold mb-6 text-center text-white">Bem-vindo(a)!</h2>
+
+    <form class="space-y-5" id="formLogin">
+      <div>
+        <label for="login" class="block mb-1 text-sm font-medium text-gray-300">Login</label>
+        <input type="text" id="login" placeholder="seuLogin"
+          class="w-full px-4 py-3 border border-gray-600 rounded-xl bg-neutral-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          required>
+      </div>
+
+      <div>
+        <label for="password" class="block mb-1 text-sm font-medium text-gray-300">Senha</label>
+        <input type="password" id="password" placeholder="••••••••"
+          class="w-full px-4 py-3 border border-gray-600 rounded-xl bg-neutral-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          required>
+      </div>
+
+      <button type="submit"
+        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold transition">
+        Entrar
+      </button>
+
+      <div class="flex justify-between text-sm mt-4">
+        <a href="#" class="text-indigo-400 hover:underline">Esqueci minha senha</a>
+        <a href="/cadastro" class="text-indigo-400 hover:underline">Criar conta</a>
+      </div>
+
+    </form>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>

@@ -18,12 +18,16 @@ import java.util.UUID;
 @Service
 public class UsuarioService {
     private UsuarioRepository repository;
+    private EmailService emailService;
+
     @Autowired
     @Qualifier("attempts")
     private RedisTemplate<String, Integer> templateAttemps;
     @Autowired
     @Qualifier("Session")
     private RedisTemplate<String, Session> templateSession;
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     public UsuarioService(UsuarioRepository repository) {
         this.repository = repository;
@@ -84,6 +88,12 @@ public class UsuarioService {
     }
     private void bloquear (LoginDTO loginDTO){
         templateAttemps.expire(getKeyTentativas(loginDTO),Duration.ofSeconds(100));
+        Session session = templateSession.opsForValue().get("session");
+        Usuario usuario = session.getUsuario();
+        String assunto = "TENTATIVA DE LOGIN FORÇADO";
+        String texto = "Houve uma tenativa de login forçado na sua conta";
+        emailService.enviarEmail(usuario.getEmail(), assunto,texto);
+
     }
     private String getKeyTentativas(LoginDTO loginDTO){
         return  "tentativas-" + loginDTO.getLogin();

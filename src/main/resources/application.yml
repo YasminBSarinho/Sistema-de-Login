@@ -19,10 +19,11 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: sistemadelogin@gmail.com
-    password: mqsc hedx sunt utur
+    username: projetologinbd@gmail.com
+    password:
     properties:
       mail:
+        debug: true
         smtp:
           auth: true
           starttls:

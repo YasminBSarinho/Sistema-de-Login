@@ -17,7 +17,6 @@ public class RedisConfiguration {
     public RedisTemplate<String, Integer> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Integer> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
-        //Essa parte deixa a serialização das chaves sem bugs
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericToStringSerializer<>(Integer.class));
 
@@ -29,7 +28,6 @@ public class RedisConfiguration {
     public RedisTemplate<String, Session> redisTemplateSession(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, Session> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
-        //Essa parte deixa a serialização das chaves sem bugs
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
 

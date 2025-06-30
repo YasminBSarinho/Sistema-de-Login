@@ -11,13 +11,11 @@ public class EmailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    /*Não foi feito nenhumm controller pois não é necessário redirecionamento,
-    apenas o metodo com os valores a serem alterados depois se necessário*/
 
     public void enviarEmail(String para, String assunto, String texto) {
 
         SimpleMailMessage mensagem = new SimpleMailMessage();
-        mensagem.setFrom("sistemadelogin@gmail.com");
+        mensagem.setFrom("projetologinbd@gmail.com");
         mensagem.setTo(para);
         mensagem.setSubject(assunto);
         mensagem.setText(texto);

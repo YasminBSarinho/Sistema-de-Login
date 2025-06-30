@@ -29,8 +29,9 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public UsuarioService(UsuarioRepository repository) {
+    public UsuarioService(UsuarioRepository repository, EmailService emailService) {
         this.repository = repository;
+        this.emailService = emailService;
     }
 
     public List<Usuario> findAll(){
@@ -39,7 +40,6 @@ public class UsuarioService {
 
     public Usuario findById(UUID id){
         Optional<Usuario> optionalUsuario = repository.findById(id);
-        //Aqui galera o optional return o usuario se existir, se não (orElse) null
         return optionalUsuario.orElse(null);
     }
 
@@ -86,14 +86,15 @@ public class UsuarioService {
         Integer tentativas = templateAttemps.opsForValue().get(keyTentativas);
         return tentativas != null && tentativas == 3;
     }
+
     private void bloquear (LoginDTO loginDTO){
         templateAttemps.expire(getKeyTentativas(loginDTO),Duration.ofSeconds(100));
-        Session session = templateSession.opsForValue().get("session");
-        Usuario usuario = session.getUsuario();
         String assunto = "TENTATIVA DE LOGIN FORÇADO";
         String texto = "Houve uma tenativa de login forçado na sua conta";
-        emailService.enviarEmail(usuario.getEmail(), assunto,texto);
-
+        Optional<Usuario> usuario = usuarioRepository.findByLogin(loginDTO.getLogin());
+        if(usuario.isPresent()){
+            emailService.enviarEmail(usuario.get().getEmail(), assunto,texto);
+        }
     }
     private String getKeyTentativas(LoginDTO loginDTO){
         return  "tentativas-" + loginDTO.getLogin();
